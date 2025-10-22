@@ -57,7 +57,8 @@ def show_range_image(frame, lidar_name):
     ####### ID_S1_EX1 START #######     
     #######
     print("student task ID_S1_EX1")
-# Step 1: Extract lidar data and range image for the roof-mounted lidar
+    
+    # Step 1: Extract lidar data and range image for the roof-mounted lidar
     lidar_name = dataset_pb2.LaserName.TOP  # roof lidar
     lidar = [obj for obj in frame.lasers if obj.name == lidar_name][0]
     ri = lidar.ri_return1.range_image_compressed
