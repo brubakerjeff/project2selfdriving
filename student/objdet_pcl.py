@@ -57,19 +57,42 @@ def show_range_image(frame, lidar_name):
     ####### ID_S1_EX1 START #######     
     #######
     print("student task ID_S1_EX1")
+# Step 1: Extract lidar data and range image for the roof-mounted lidar
+    lidar_name = dataset_pb2.LaserName.TOP  # roof lidar
+    lidar = [obj for obj in frame.lasers if obj.name == lidar_name][0]
+    ri = lidar.ri_return1.range_image_compressed
+    ri = tf.image.decode_png(ri)
+    ri = tf.squeeze(ri).numpy()  # shape: (H, W, C)
 
-    # step 1 : extract lidar data and range image for the roof-mounted lidar
-    
-    # step 2 : extract the range and the intensity channel from the range image
-    
-    # step 3 : set values <0 to zero
-    
-    # step 4 : map the range channel onto an 8-bit scale and make sure that the full range of values is appropriately considered
-    
-    # step 5 : map the intensity channel onto an 8-bit scale and normalize with the difference between the 1- and 99-percentile to mitigate the influence of outliers
-    
-    # step 6 : stack the range and intensity image vertically using np.vstack and convert the result to an unsigned 8-bit integer
-    
+    # Step 2: Extract the range and intensity channel
+    range_channel = ri[:, :, 0].astype(np.float32)
+    intensity_channel = ri[:, :, 1].astype(np.float32)
+
+    # Step 3: Set values < 0 to zero
+    range_channel[range_channel < 0] = 0
+    intensity_channel[intensity_channel < 0] = 0
+
+    # Step 4: Normalize range to 8-bit scale
+    range_min = np.min(range_channel)
+    range_max = np.max(range_channel)
+    range_normalized = (range_channel - range_min) / (range_max - range_min)
+    range_img = (range_normalized * 255).astype(np.uint8)
+
+    # Step 5: Normalize intensity with 1st and 99th percentile clipping
+    i_min = np.percentile(intensity_channel, 1)
+    i_max = np.percentile(intensity_channel, 99)
+    intensity_clipped = np.clip(intensity_channel, i_min, i_max)
+    intensity_normalized = (intensity_clipped - i_min) / (i_max - i_min)
+    intensity_img = (intensity_normalized * 255).astype(np.uint8)
+
+    # Step 6: Stack vertically
+    img_range_intensity = np.vstack([range_img, intensity_img])
+
+    # Optional: Show the image
+    cv2.imshow("Range + Intensity Image", img_range_intensity)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
     img_range_intensity = [] # remove after implementing all steps
     #######
     ####### ID_S1_EX1 END #######     
