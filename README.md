@@ -1,5 +1,11 @@
 
 # SDCND : Sensor Fusion and Tracking
+# py -3.12 -m venv env_name
+# source env_name/Scripts/activate
+# python loop_over_dataset.py
+
+# https://learn.udacity.com/nd0013?version=5.0.9&partKey=cd2690&lessonKey=84543e78-7471-4897-b293-2abb7ac0b926&conceptKey=d06e0281-275c-4a9c-b413-5317b95ae493
+
 This is the project for the second course in the  [Udacity Self-Driving Car Engineer Nanodegree Program](https://www.udacity.com/course/c-plus-plus-nanodegree--nd213) : Sensor Fusion and Tracking. 
 
 In this project, you'll fuse measurements from LiDAR and camera and track vehicles over time. You will be using real-world data from the Waymo Open Dataset, detect objects in 3D point clouds and apply an extended Kalman filter for sensor fusion and tracking.

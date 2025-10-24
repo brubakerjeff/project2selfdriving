@@ -1,11 +1,11 @@
 numpy
 opencv-python
-protobuf
+protobuf==3.15.6
 easydict
-pytorch
+torch
 pillow
 matplotlib
-wxpython
 shapely
 tqdm
 open3d
+scipy
