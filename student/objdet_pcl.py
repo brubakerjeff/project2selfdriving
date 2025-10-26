@@ -14,7 +14,7 @@
 import cv2
 import numpy as np
 import torch
-
+import zlib
 # add project directory to python path to enable relative imports
 import os
 import sys
@@ -61,28 +61,35 @@ def show_range_image(frame, lidar_name):
     # Step 1: Extract lidar data and range image for the roof-mounted lidar
     lidar_name = dataset_pb2.LaserName.TOP  # roof lidar
     lidar = [obj for obj in frame.lasers if obj.name == lidar_name][0]
-    ri = lidar.ri_return1.range_image_compressed
-    ri = tf.image.decode_png(ri)
-    ri = tf.squeeze(ri).numpy()  # shape: (H, W, C)
+    if len(lidar.ri_return1.range_image_compressed) > 0: # use first response
+        ri = dataset_pb2.MatrixFloat()
+        ri.ParseFromString(zlib.decompress(lidar.ri_return1.range_image_compressed))
+        ri = np.array(ri.data).reshape(ri.shape.dims)
+        print(ri.shape)
+    
 
     # Step 2: Extract the range and intensity channel
-    range_channel = ri[:, :, 0].astype(np.float32)
-    intensity_channel = ri[:, :, 1].astype(np.float32)
+    # extract range values from frame
+    ri_intensity = ri[:,:,1]
+    ri_intensity = np.amax(ri_intensity)/2 * ri_intensity * 255 / (np.amax(ri_intensity) - np.amin(ri_intensity)) 
+    img_intensity = ri_intensity.astype(np.uint8)
+    
+
 
     # Step 3: Set values < 0 to zero
-    range_channel[range_channel < 0] = 0
-    intensity_channel[intensity_channel < 0] = 0
+    ri[ri<0]=0.0
+    ri_range = ri[:,:,0]    
 
     # Step 4: Normalize range to 8-bit scale
-    range_min = np.min(range_channel)
-    range_max = np.max(range_channel)
-    range_normalized = (range_channel - range_min) / (range_max - range_min)
+    range_min = np.min(ri_range)
+    range_max = np.max(ri_range)
+    range_normalized = (ri_range - range_min) / (range_max - range_min)
     range_img = (range_normalized * 255).astype(np.uint8)
 
     # Step 5: Normalize intensity with 1st and 99th percentile clipping
-    i_min = np.percentile(intensity_channel, 1)
-    i_max = np.percentile(intensity_channel, 99)
-    intensity_clipped = np.clip(intensity_channel, i_min, i_max)
+    i_min = np.percentile(img_intensity, 1)
+    i_max = np.percentile(img_intensity, 99)
+    intensity_clipped = np.clip(img_intensity, i_min, i_max)
     intensity_normalized = (intensity_clipped - i_min) / (i_max - i_min)
     intensity_img = (intensity_normalized * 255).astype(np.uint8)
 
@@ -94,7 +101,6 @@ def show_range_image(frame, lidar_name):
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
-    img_range_intensity = [] # remove after implementing all steps
     #######
     ####### ID_S1_EX1 END #######     
     
