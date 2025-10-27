@@ -14,6 +14,8 @@
 import cv2
 import numpy as np
 import torch
+import open3d as o3d
+import numpy as np
 import zlib
 # add project directory to python path to enable relative imports
 import os
@@ -38,10 +40,14 @@ def show_pcl(pcl):
     print("student task ID_S1_EX2")
 
     # step 1 : initialize open3d with key callback and create window
-    
+    vis = o3d.visualization.VisualizerWithKeyCallback()
+    vis.create_window(window_name='LiDAR Point Cloud', width=800, height=600)
+   
     # step 2 : create instance of open3d point-cloud class
+    pcd = o3d.geometry.PointCloud()
 
     # step 3 : set points in pcd instance by converting the point-cloud into 3d vectors (using open3d function Vector3dVector)
+    pcd.points = o3d.utility.Vector3dVector(pcl[:, :3])  # ensure pcl is Nx3
 
     # step 4 : for the first frame, add the pcd instance to visualization using add_geometry; for all other frames, use update_geometry instead
     
@@ -107,9 +113,9 @@ def show_range_image(frame, lidar_name):
     img_range_intensity = np.vstack([range_img_cropped, intensity_img_cropped])
 
     # Optional: Show the image
-    cv2.imshow("Range + Intensity Image", img_range_intensity)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    #cv2.imshow("Range + Intensity Image", img_range_intensity)
+    #cv2.waitKey(0)
+    #cv2.destroyAllWindows()
 
     #######
     ####### ID_S1_EX1 END #######     
