@@ -86,6 +86,7 @@ def show_range_image(frame, lidar_name):
     range_normalized = (ri_range - range_min) / (range_max - range_min)
     range_img = (range_normalized * 255).astype(np.uint8)
 
+
     # Step 5: Normalize intensity with 1st and 99th percentile clipping
     i_min = np.percentile(img_intensity, 1)
     i_max = np.percentile(img_intensity, 99)
@@ -93,8 +94,17 @@ def show_range_image(frame, lidar_name):
     intensity_normalized = (intensity_clipped - i_min) / (i_max - i_min)
     intensity_img = (intensity_normalized * 255).astype(np.uint8)
 
-    # Step 6: Stack vertically
-    img_range_intensity = np.vstack([range_img, intensity_img])
+    # ✅ Step 5.5: Crop to ±90° (front 180° view)
+    # The horizontal axis corresponds to azimuth angle (0–360°)
+    # Keep the middle half of the image
+    width = range_img.shape[1]
+    start_col = width // 4        # -90 degrees
+    end_col = 3 * width // 4      # +90 degrees
+    range_img_cropped = range_img[:, start_col:end_col]
+    intensity_img_cropped = intensity_img[:, start_col:end_col]
+
+    # Step 6: Stack vertically (cropped images)
+    img_range_intensity = np.vstack([range_img_cropped, intensity_img_cropped])
 
     # Optional: Show the image
     cv2.imshow("Range + Intensity Image", img_range_intensity)

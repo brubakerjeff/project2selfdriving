@@ -179,12 +179,12 @@ while True:
         ## Visualization for object detection
         if 'show_range_image' in exec_list:
             img_range = pcl.show_range_image(frame, lidar_name)
-            print(img_range)
-            exit(-1)
+
             img_range = img_range.astype(np.uint8)
             cv2.imshow('range_image', img_range)
             cv2.waitKey(vis_pause_time)
-
+            print(img_range)
+            exit(-1)
         if 'show_pcl' in exec_list:
             pcl.show_pcl(lidar_pcl)
 
