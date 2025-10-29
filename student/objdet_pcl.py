@@ -34,6 +34,11 @@ import misc.objdet_tools as tools
 
 # visualize lidar point-cloud
 def show_pcl(pcl):
+    def close_window(vis) -> bool:
+        print("Right Arrow Pressed...")
+   
+        return False     
+
 
     ####### ID_S1_EX2 START #######     
     #######
@@ -50,9 +55,12 @@ def show_pcl(pcl):
     pcd.points = o3d.utility.Vector3dVector(pcl[:, :3])  # ensure pcl is Nx3
 
     # step 4 : for the first frame, add the pcd instance to visualization using add_geometry; for all other frames, use update_geometry instead
+    vis.add_geometry(pcd)
     
-    # step 5 : visualize point cloud and keep window open until right-arrow is pressed (key-code 262)
 
+    # step 5 : visualize point cloud and keep window open until right-arrow is pressed (key-code 262)
+    vis.register_key_callback(262, close_window)
+    vis.run()
     #######
     ####### ID_S1_EX2 END #######     
        
