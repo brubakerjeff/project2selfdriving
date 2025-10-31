@@ -183,8 +183,6 @@ while True:
             img_range = img_range.astype(np.uint8)
             cv2.imshow('range_image', img_range)
             cv2.waitKey(vis_pause_time)
-            print(img_range)
-            exit(-1)
         if 'show_pcl' in exec_list:
             pcl.show_pcl(lidar_pcl)
 
@@ -266,7 +264,7 @@ while True:
 
         # increment frame counter
         cnt_frame = cnt_frame + 1    
-
+        firstFrame = False
     except StopIteration:
         # if StopIteration is raised, break from loop
         print("StopIteration has been raised\n")
