@@ -31,11 +31,13 @@ from tools.waymo_reader.simple_waymo_open_dataset_reader import dataset_pb2, lab
 # object detection tools and helper functions
 import misc.objdet_tools as tools
 
+first_frame = True
 
 # visualize lidar point-cloud
 def show_pcl(pcl):
+    global first_frame
     def close_window(vis) -> bool:
-        vis.close()
+       # vis.close()
         print("Right Arrow Pressed...")
    
         return False     
@@ -57,7 +59,11 @@ def show_pcl(pcl):
 
     # step 4 : for the first frame, add the pcd instance to visualization using add_geometry; for all other frames, use update_geometry instead
     #if(firstFrame == True):
-    vis.add_geometry(pcd)
+    if first_frame:
+        vis.add_geometry(pcd)
+        globalfirst_frame = False
+    else:
+        vis.update_geometry(pcd)
     #else:
     #    vis.update_geometry(pcd)
     
