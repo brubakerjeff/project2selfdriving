@@ -115,9 +115,18 @@ def create_model(configs):
     elif 'fpn_resnet' in configs.arch:
         print('using ResNet architecture with feature pyramid')
         
-        ####### ID_S3_EX1-4 START #######     
+        ####### ID_S3_EX1-4 START #######
         #######
         print("student task ID_S3_EX1-4")
+        arch_parts = configs.arch.split("_")
+        num_layers = int(arch_parts[-1])
+
+        model = fpn_resnet.get_pose_net(
+            num_layers=num_layers,
+            heads=configs.heads,
+            head_conv=configs.head_conv,
+            imagenet_pretrained=configs.imagenet_pretrained,
+        )
 
         #######
         ####### ID_S3_EX1-4 END #######     
