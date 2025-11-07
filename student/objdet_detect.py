@@ -143,6 +143,24 @@ def create_model(configs):
         ####### ID_S3_EX1-4 START #######     
         #######
         print("student task ID_S3_EX1-4")
+        configs.device = torch.device('cpu' if configs.no_cuda else 'cuda:{}'.format(configs.gpu_idx))
+        model = model.to(device=configs.device)
+        out_cap = None
+        model.eval()
+        test_dataloader = create_test_dataloader(configs)
+        with torch.no_grad():
+            for batch_idx, batch_data in enumerate(test_dataloader):
+                metadatas, bev_maps, img_rgbs = batch_data
+                input_bev_maps = bev_maps.to(configs.device, non_blocking=True).float()
+                t1 = time_synchronized()
+                outputs = model(input_bev_maps)
+                outputs['hm_cen'] = _sigmoid(outputs['hm_cen'])
+                outputs['cen_offset'] = _sigmoid(outputs['cen_offset'])
+                # detections size (batch_size, K, 10)
+                detections = decode(outputs['hm_cen'], outputs['cen_offset'], outputs['direction'], outputs['z_coor'],
+                                    outputs['dim'], K=configs.K)
+                detections = detections.cpu().numpy().astype(np.float32)
+                detections = post_processing(detections, configs.num_classes, configs.down_ratio, configs.peak_thresh)
 
         #######
         ####### ID_S3_EX1-4 END #######     
