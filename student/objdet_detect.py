@@ -61,7 +61,7 @@ def load_configs_model(model_name='darknet', configs=None):
         ####### ID_S3_EX1-3 START #######     
         #######
         print("student task ID_S3_EX1-3")
-        configs = edict(vars(parser.parse_args()))
+        #configs = edict(vars(parser.parse_args()))
         configs.pin_memory = True
         configs.distributed = False  # For testing on 1 GPU only
     
