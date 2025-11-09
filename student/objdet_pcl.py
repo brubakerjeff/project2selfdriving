@@ -169,7 +169,7 @@ def bev_from_pcl(lidar_pcl, configs):
     lidar_pcl_cpy[:, 1] = np.int_(np.floor((lidar_pcl_cpy[:, 1] - configs.lim_y[0]) / bev_discret))
     # step 4 : visualize point-cloud using the function show_pcl from a previous task
     show_pcl(lidar_pcl_cpy)
-
+    
     #######
     ####### ID_S2_EX1 END #######     
     
@@ -219,6 +219,7 @@ def bev_from_pcl(lidar_pcl, configs):
         if cv2.waitKey(10) & 0xFF == 27:
             break
     cv2.destroyAllWindows()
+    return(-1)
     #######
     ####### ID_S2_EX2 END ####### 
 
@@ -265,10 +266,10 @@ def bev_from_pcl(lidar_pcl, configs):
     bev_maps = torch.from_numpy(bev_maps)  # create tensor from birds-eye view
     input_bev_maps = bev_maps.to(configs.device, non_blocking=True).float()
 
-    density_map = density_map * 256
-    density_map = density_map.astype(np.uint8)
+    bev_map = bev_map * 256
+    bev_map = bev_map.astype(np.uint8)
     while (1):
-        cv2.imshow('density_map', density_map)
+        cv2.imshow('density_map', bev_map)
         if cv2.waitKey(10) & 0xFF == 27:
             break
     cv2.destroyAllWindows()
