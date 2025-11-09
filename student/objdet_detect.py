@@ -64,12 +64,14 @@ def load_configs_model(model_name='darknet', configs=None):
         #configs = edict(vars(parser.parse_args()))
         configs.pin_memory = True
         configs.distributed = False  # For testing on 1 GPU only
-    
+        configs.model_path = os.path.join(parent_path, 'tools', 'objdet_models', 'resnet')
+        configs.pretrained_filename = os.path.join(configs.model_path, 'models', 'fpn_resnet_18_epoch_300.pth')
+        print(configs.pretrained_filename)
         configs.input_size = (608, 608)
         configs.hm_size = (152, 152)
         configs.down_ratio = 4
         configs.max_objects = 50
-    
+        configs.arch = 'fpn_resnet'
         configs.imagenet_pretrained = False
         configs.head_conv = 64
         configs.num_classes = 3
