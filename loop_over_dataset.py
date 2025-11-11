@@ -161,7 +161,7 @@ while True:
             valid_label_flags = tools.validate_object_labels(frame.laser_labels, lidar_pcl, configs_det, 0 if configs_det.use_labels_as_objects==True else 10)
         else:
             print('loading object labels and validation from result file')
-          #  valid_label_flags = load_object_from_file(results_fullpath, data_filename, 'valid_labels', cnt_frame)            
+            valid_label_flags = load_object_from_file(results_fullpath, data_filename, 'valid_labels', cnt_frame)            
 
         ## Performance evaluation for object detection
         if 'measure_detection_performance' in exec_list:
