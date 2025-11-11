@@ -219,7 +219,7 @@ def bev_from_pcl(lidar_pcl, configs):
         if cv2.waitKey(10) & 0xFF == 27:
             break
     cv2.destroyAllWindows()
-    return(-1)
+   
     #######
     ####### ID_S2_EX2 END ####### 
 
@@ -268,12 +268,12 @@ def bev_from_pcl(lidar_pcl, configs):
 
     bev_map = bev_map * 256
     bev_map = bev_map.astype(np.uint8)
-    while (1):
-        cv2.imshow('density_map', bev_map)
-        if cv2.waitKey(10) & 0xFF == 27:
-            break
+   #while (1):
+    #    cv2.imshow('density_map', bev_map)
+    #    if cv2.waitKey(10) & 0xFF == 27:
+    #        break
     cv2.destroyAllWindows()
-
+    print("-200")
     return input_bev_maps
 
 
