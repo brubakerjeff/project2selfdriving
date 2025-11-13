@@ -234,13 +234,32 @@ def detect_objects(input_bev_maps, model, configs):
     objects = [] 
 
     ## step 1 : check whether there are any detections
+    if len(detections) == 0:
+        return objects
 
-        ## step 2 : loop over all detections
         
-            ## step 3 : perform the conversion using the limits for x, y and z set in the configs structure
+    # Step 2 : loop over all detections
+    for det in detections:
+        this_id, this_x, this_y, this_z, this_h, this_w, this_l, this_yaw = det
         
-            ## step 4 : append the current object to the 'objects' array
-        
+        # Step 3 : perform the conversion using the limits for x, y and z set in the configs structure
+        x = this_y * (configs.lim_x[1] - configs.lim_x[0]) / configs.bev_height
+        y = this_x * (configs.lim_y[1] - configs.lim_y[0]) / configs.bev_width - (configs.lim_y[1] - configs.lim_y[0]) / 2.0
+        z = this_z
+        w = this_w * (configs.lim_y[1] - configs.lim_y[0]) / configs.bev_width
+        l = this_l * (configs.lim_x[1] - configs.lim_x[0]) / configs.bev_height
+        yaw = -1 * this_yaw # According to instructions
+
+        # Step 4 : append the current object to the 'objects' array
+        if (
+            (x >= configs.lim_x[0]) and (x <= configs.lim_x[1]) and
+            (y >= configs.lim_y[0]) and (y <= configs.lim_y[1]) and
+            (z >= configs.lim_z[0]) and (z <= configs.lim_z[1])
+        ):
+            data = [1, x, y, z, this_h, w, l, yaw]
+            objects.append(data)
+            print(data)
+
     #######
     ####### ID_S3_EX2 START #######   
     
