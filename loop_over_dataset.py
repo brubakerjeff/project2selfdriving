@@ -134,6 +134,7 @@ while True:
         ## Compute lidar birds-eye view (bev)
         if 'bev_from_pcl' in exec_list:
             print('computing birds-eye view from lidar pointcloud')
+            #Data is coming out as zero           
             lidar_bev = pcl.bev_from_pcl(lidar_pcl, configs_det)
         else:
             print('loading birds-eve view from result file')
@@ -201,6 +202,7 @@ while True:
             tools.show_objects_labels_in_bev(detections, frame.laser_labels, lidar_bev, configs_det)
             cv2.waitKey(vis_pause_time)         
 
+        #JEB: lidar_bev is passed here
         if 'show_objects_in_bev_labels_in_camera' in exec_list:
             tools.show_objects_in_bev_labels_in_camera(detections, lidar_bev, image, frame.laser_labels, valid_label_flags, camera_calibration, configs_det)
             cv2.waitKey(vis_pause_time)               
