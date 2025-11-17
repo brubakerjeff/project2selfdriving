@@ -223,7 +223,13 @@ def bev_from_pcl(lidar_pcl, configs):
     ## step 4 : assign the intensity value of each unique entry in lidar_top_pcl to the intensity map
     ##          make sure that the intensity is scaled in such a way that objects of interest (e.g. vehicles) are clearly visible
     ##          also, make sure that the influence of outliers is mitigated by normalizing intensity on the difference between the max. and min. value within the point cloud
-    intensity_map[np.uint16(lidar_pcl_top[:, 0]), np.uint16(lidar_pcl_top[:, 1])] = lidar_pcl_top[:, 3] / (
+#    ttt=np.uint16(lidar_pcl_top[:, 0])
+    ttt = np.uint16(lidar_pcl_top[:, 1])
+
+    for v in ttt:
+        print(v)
+
+    intensity_map[ttt, np.uint16(lidar_pcl_top[:, 1])] = lidar_pcl_top[:, 3] / (
         np.max(lidar_pcl_top[:, 3]) - np.min(lidar_pcl_top[:, 3])
     )
 
