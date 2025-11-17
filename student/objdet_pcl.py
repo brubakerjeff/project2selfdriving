@@ -184,7 +184,7 @@ def bev_from_pcl(lidar_pcl, configs):
     #lidar_pcl_cpy[:, 1] = np.uint16((lidar_pcl_cpy[:, 1] + y_offset) / bev_width_res)
 
     bev_discret_y = (configs.lim_y[1] - configs.lim_y[0]) / configs.bev_width
-    lidar_pcl[:, 1] = np.floor((lidar_pcl[:, 1] - configs.lim_y[0]) / bev_discret_y).astype(np.int32)
+    lidar_pcl_cpy[:, 1] = np.floor((lidar_pcl[:, 1] - configs.lim_y[0]) / bev_discret_y).astype(np.int32)
 
 
 
@@ -234,7 +234,7 @@ def bev_from_pcl(lidar_pcl, configs):
     )
 
     ## step 5 : temporarily visualize the intensity map using OpenCV to make sure that vehicles separate well from the background
-    intensity_map_img = intensity_map.astype(np.uint8) * 256
+    intensity_map_img = intensity_map.astype(np.uint8) 
     cv2.imshow("Intensity map", intensity_map_img)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
