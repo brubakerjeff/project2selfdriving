@@ -229,7 +229,7 @@ def bev_from_pcl(lidar_pcl, configs):
     #for v in ttt:
     #    print(v)
 
-    intensity_map[np.uint16(lidar_pcl_top[:, 1]), np.uint16(lidar_pcl_top[:, 1])] = lidar_pcl_top[:, 3] / (
+    intensity_map[np.uint16(lidar_pcl_top[:, 0]), np.uint16(lidar_pcl_top[:, 1])] = lidar_pcl_top[:, 3] / (
         np.max(lidar_pcl_top[:, 3]) - np.min(lidar_pcl_top[:, 3])
     )
 
