@@ -49,7 +49,7 @@ def measure_detection_performance(detections, labels, labels_valid, min_iou=0.5)
             print("student task ID_S4_EX1 ")
 
             ## step 1 : extract the four corners of the current label bounding-box
-            
+            print(detections)
             ## step 2 : loop over all detected objects
 
                 ## step 3 : extract the four corners of the current detection
