@@ -234,8 +234,8 @@ def bev_from_pcl(lidar_pcl, configs):
     )
 
     ## step 5 : temporarily visualize the intensity map using OpenCV to make sure that vehicles separate well from the background
-    intensity_map_img = intensity_map.astype(np.uint8) 
-    cv2.imshow("Intensity map", intensity_map_img)
+    #intensity_map_img = intensity_map.astype(np.uint8) 
+    cv2.imshow("Intensity map", intensity_map)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
