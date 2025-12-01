@@ -9,7 +9,11 @@
 # https://www.udacity.com/course/self-driving-car-engineer-nanodegree--nd013
 # ----------------------------------------------------------------------
 #
-
+# In the Track class, replace the fixed track initialization values by initialization of track.x and track.P based on the input meas, 
+# which is an unassigned lidar measurement object of type Measurement. Transform the unassigned measurement from sensor to vehicle coordinates 
+# with the sens_to_veh transformation matrix implemented in the Sensor class. Initialize the track state with 'initialized' and the score with 
+# 1./params.window, where window is the window size parameter, as learned in the track management lesson.
+# 
 # imports
 import numpy as np
 import collections
