@@ -25,6 +25,7 @@ class Filter:
     '''Kalman filter class'''
     def __init__(self):
         self.dt=params.dt
+        self.q=0.1 
         pass
 
     def F(self):
@@ -44,7 +45,7 @@ class Filter:
         ############ 
 
     def Q(self):
-        q=self.Q
+        q=self.q
         dt=self.dt
         q1=((dt**3)/3)*q
         q2=((dt**2)/2)*q
@@ -68,8 +69,7 @@ class Filter:
         x = F*track.x # state prediction
         P = F*track.P*F.transpose() + self.Q() # covariance prediction
         track.set_x(x)
-        track.set_y(y)
-        track.set_P(p)
+        track.set_P(P)
         ############
         # END student code
         ############ 
@@ -79,13 +79,13 @@ class Filter:
         # TODO Step 1: update state x and covariance P with associated measurement, save x and P in track
         ############
         # update state and covariance with associated measurement
-        H = meas.sensor.get_H() # measurement matrix
-        gamma = self.gama(track,meas)
+        H = meas.sensor.get_H(track.x) # measurement matrix
+        gamma = self.gamma(track,meas)
         
-        S = self.S()
+        S = self.S(track,meas,H)
         K = track.P*H.transpose()*np.linalg.inv(S) # Kalman gain
         x = track.x + K*gamma # state update
-        I = np.identity(self.dim_state)
+        I = np.identity(params.dim_state)
         P = (I - K*H) * track.P # covariance update
       
         ############
@@ -111,7 +111,7 @@ class Filter:
         ############
         # TODO Step 1: calculate and return covariance of residual S
         ############
-        H = meas.sensor.get_H() # measurement matrix
+        H = meas.sensor.get_H(track.x) # measurement matrix
         S=H*track.P*H.transpose() + meas.R # covariance of residual
         return S
         
