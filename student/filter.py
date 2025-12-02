@@ -100,7 +100,7 @@ class Filter:
         ############
         # TODO Step 1: calculate and return residual gamma
         ############
-        gamme =  meas.z - meas.sensor.get_H(track.x)
+        gamme =  meas.z - meas.sensor.get_H(track.x)*track.x
         return gamme
         
         ############
