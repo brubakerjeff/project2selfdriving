@@ -39,7 +39,21 @@ class Association:
         ############
         
         # the following only works for at most one track and one measurement
-        self.association_matrix = np.matrix([]) # reset matrix
+
+        N = len(track_list) # N tracks
+        M = len(meas_list) # M measurements
+
+        self.association_matrix =  np.inf*np.ones((N,M))  # reset matrix
+        # loop over all tracks and all measurements to set up association matrix
+        for i in range(N): 
+            track = track_list[i]
+            for j in range(M):
+                meas = meas_list[j]
+                dist = self.MHD(track, meas)
+                self.association_matrix[i,j] = dist
+
+
+
         self.unassigned_tracks = [] # reset lists
         self.unassigned_meas = []
         
@@ -81,8 +95,12 @@ class Association:
         ############
         # TODO Step 3: return True if measurement lies inside gate, otherwise False
         ############
-        
-        pass    
+        # check if measurement lies inside gate
+        limit = chi2.ppf(0.95, df=2)
+        if MHD < limit:
+            return True
+        else:
+            return False
         
         ############
         # END student code
@@ -92,8 +110,14 @@ class Association:
         ############
         # TODO Step 3: calculate and return Mahalanobis distance
         ############
-        
-        pass
+         # calc Mahalanobis distance
+        H = np.matrix([[1, 0, 0, 0],
+                       [0, 1, 0, 0]]) 
+        gamma = meas.z - H*track.x
+        S = H*track.P*H.transpose() + meas.R
+        MHD = gamma.transpose()*np.linalg.inv(S)*gamma # Mahalanobis distance formula
+        return MHD
+
         
         ############
         # END student code
