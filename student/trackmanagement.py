@@ -60,6 +60,8 @@ class Track:
         self.P = np.zeros((6, 6))
         self.P[0:3, 0:3] = P_pos
         self.P[3:6, 3:6] = P_vel
+        self.state = 'confirmed'
+        self.score = 0        
         ############
         # END student code
         ############ 
@@ -168,7 +170,14 @@ class Trackmanagement:
         # - set track state to 'tentative' or 'confirmed'
         ############
 
-        pass
+        # Increase the track score
+        track.score += 1  # You can adjust the increment value as needed
+
+        # Set the track state based on the score
+        if track.score >= self.confirmed_threshold:  # Assuming you have a threshold defined
+            track.state = 'confirmed'
+        else:
+            track.state = 'tentative'
         
         ############
         # END student code
