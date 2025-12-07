@@ -61,7 +61,7 @@ class Track:
         self.P[0:3, 0:3] = P_pos
         self.P[3:6, 3:6] = P_vel
         self.state = 'confirmed'
-        self.score = 0        
+        self.score = 1/params.window        
         ############
         # END student code
         ############ 
@@ -118,7 +118,7 @@ class Trackmanagement:
             # check visibility    
             if meas_list: # if not empty
                 if meas_list[0].sensor.in_fov(track.x):
-                    track.score -= params.track_score_decrease
+                    track.score -= 1 / params.window
                     track.score = max(track.score, 0.0)  # clamp to zero
                 else:
                 # optional: no penalty if outside FOV
@@ -171,7 +171,7 @@ class Trackmanagement:
         ############
 
         # Increase the track score
-        track.score += 1  # You can adjust the increment value as needed
+        track.score += 1/params.window  # You can adjust the increment value as needed
 
         # Set the track state based on the score
         if track.score >= self.confirmed_threshold:  # Assuming you have a threshold defined
