@@ -17,7 +17,7 @@
 # imports
 import numpy as np
 import collections
-
+import misc.params as params 
 # add project directory to python path to enable relative imports
 import os
 import sys
@@ -49,13 +49,11 @@ class Track:
         # set up position estimation error covariance
         #M_rot = meas.sensor.sens_to_veh[0:3, 0:3]
         P_pos = M_rot * meas.R * np.transpose(M_rot)
-        # set up velocity estimation error covariance
-        sigma_p44 = 50 # initial setting for estimation error covariance P entry for vx
-        sigma_p55 = 50 # initial setting for estimation error covariance P entry for vy
-        sigma_p66 = 5 # initial setting for estimation error covariance P entry for vz
-        P_vel = np.matrix([[sigma_p44**2, 0, 0],
-                        [0, sigma_p55**2, 0],
-                        [0, 0, sigma_p66**2]])
+
+
+        P_vel = np.matrix([[params.sigma_p44, 0, 0],
+                        [0, params.sigma_p55, 0],
+                        [0, 0, params.sigma_p66]])
         # overall covariance initialization
         self.P = np.zeros((6, 6))
         self.P[0:3, 0:3] = P_pos
