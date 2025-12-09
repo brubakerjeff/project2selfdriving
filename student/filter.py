@@ -99,7 +99,10 @@ class Filter:
         track.set_P(P)
         ############
         # END student code
-        ############ 
+        ############
+        # 
+        track.set_x(x) 
+        track.set_P(P)   
         track.update_attributes(meas)
     
     def gamma(self, track, meas):

@@ -60,10 +60,9 @@ show_only_frames = [150, 200]
 data_fullpath = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'dataset', data_filename) # adjustable path in case this script is called from another working directory
 results_fullpath = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'results')
 datafile = WaymoDataFileReader(data_fullpath)
-datafile_iter = iter(datafile)  # initialize dataset iterator
-
+datafile_iter = iter(datafile)  # initialize dataset iter
 ## Initialize object detection
-configs_det = det.load_configs(model_name='fpn_resnet') # options are 'darknet', 'fpn_resnet'
+configs_det = det.load_configs(model_name="fpn_resnet") # options are 'darknet', 'fpn_resnet'
 model_det = det.create_model(configs_det)
 
 configs_det.use_labels_as_objects = False # True = use groundtruth labels as objects, False = use model-based detection
@@ -135,10 +134,11 @@ while True:
         ## Compute lidar birds-eye view (bev)
         if 'bev_from_pcl' in exec_list:
             print('computing birds-eye view from lidar pointcloud')
+            #Data is coming out as zero           
             lidar_bev = pcl.bev_from_pcl(lidar_pcl, configs_det)
         else:
             print('loading birds-eve view from result file')
-            lidar_bev = load_object_from_file(results_fullpath, data_filename, 'lidar_bev', cnt_frame)
+           # lidar_bev = load_object_from_file(results_fullpath, data_filename, 'lidar_bev', cnt_frame)
 
         ## 3D object detection
         if (configs_det.use_labels_as_objects==True):
@@ -153,8 +153,8 @@ while True:
                 # load different data for final project vs. mid-term project
                 if 'perform_tracking' in exec_list:
                     detections = load_object_from_file(results_fullpath, data_filename, 'detections', cnt_frame)
-                else:
-                    detections = load_object_from_file(results_fullpath, data_filename, 'detections_' + configs_det.arch + '_' + str(configs_det.conf_thresh), cnt_frame)
+                #else:
+                #    detections = load_object_from_file(results_fullpath, data_filename, 'detections_' + configs_det.arch + '_' + str(configs_det.conf_thresh), cnt_frame)
 
         ## Validate object labels
         if 'validate_object_labels' in exec_list:
@@ -182,10 +182,10 @@ while True:
         ## Visualization for object detection
         if 'show_range_image' in exec_list:
             img_range = pcl.show_range_image(frame, lidar_name)
+
             img_range = img_range.astype(np.uint8)
             cv2.imshow('range_image', img_range)
             cv2.waitKey(vis_pause_time)
-
         if 'show_pcl' in exec_list:
             pcl.show_pcl(lidar_pcl)
 
@@ -202,6 +202,7 @@ while True:
             tools.show_objects_labels_in_bev(detections, frame.laser_labels, lidar_bev, configs_det)
             cv2.waitKey(vis_pause_time)         
 
+        #JEB: lidar_bev is passed here
         if 'show_objects_in_bev_labels_in_camera' in exec_list:
             tools.show_objects_in_bev_labels_in_camera(detections, lidar_bev, image, frame.laser_labels, valid_label_flags, camera_calibration, configs_det)
             cv2.waitKey(vis_pause_time)               
@@ -267,7 +268,7 @@ while True:
 
         # increment frame counter
         cnt_frame = cnt_frame + 1    
-
+        firstFrame = False
     except StopIteration:
         # if StopIteration is raised, break from loop
         print("StopIteration has been raised\n")
@@ -279,7 +280,7 @@ while True:
 
 ## Evaluate object detection performance
 if 'show_detection_performance' in exec_list:
-    eval.compute_performance_stats(det_performance_all, configs_det)
+    eval.compute_performance_stats(det_performance_all)
 
 ## Plot RMSE for all tracks
 if 'show_tracks' in exec_list:

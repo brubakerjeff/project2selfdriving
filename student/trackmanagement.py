@@ -9,7 +9,11 @@
 # https://www.udacity.com/course/self-driving-car-engineer-nanodegree--nd013
 # ----------------------------------------------------------------------
 #
-
+# In the Track class, replace the fixed track initialization values by initialization of track.x and track.P based on the input meas, 
+# which is an unassigned lidar measurement object of type Measurement. Transform the unassigned measurement from sensor to vehicle coordinates 
+# with the sens_to_veh transformation matrix implemented in the Sensor class. Initialize the track state with 'initialized' and the score with 
+# 1./params.window, where window is the window size parameter, as learned in the track management lesson.
+# 
 # imports
 import numpy as np
 import collections
@@ -34,7 +38,6 @@ class Track:
         # unassigned measurement transformed from sensor to vehicle coordinates
         # - initialize track state and track score with appropriate values
         ############
-
         # transform measurement to vehicle coordinates
         pos_sens = np.ones((4, 1)) # homogeneous coordinates
         pos_sens[0:3] = meas.z[0:3] 
@@ -77,6 +80,22 @@ class Track:
         self.state = "initialized"
         self.score = 1./params.window
         
+        # set up position estimation error covariance
+        #M_rot = meas.sensor.sens_to_veh[0:3, 0:3]
+        P_pos = M_rot * meas.R * np.transpose(M_rot)
+        # set up velocity estimation error covariance
+        sigma_p44 = 50 # initial setting for estimation error covariance P entry for vx
+        sigma_p55 = 50 # initial setting for estimation error covariance P entry for vy
+        sigma_p66 = 5 # initial setting for estimation error covariance P entry for vz
+        P_vel = np.matrix([[sigma_p44**2, 0, 0],
+                        [0, sigma_p55**2, 0],
+                        [0, 0, sigma_p66**2]])
+        # overall covariance initialization
+        self.P = np.zeros((6, 6))
+        self.P[0:3, 0:3] = P_pos
+        self.P[3:6, 3:6] = P_vel
+        self.state = 'confirmed'
+        self.score = 1/params.window        
         ############
         # END student code
         ############ 
