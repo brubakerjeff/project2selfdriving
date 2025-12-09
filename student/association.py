@@ -62,7 +62,7 @@ class Association:
                 else:
                     temp.append(np.inf)
             
-            self.association_matrix.append(temp)
+            association_matrix.append(temp)
         
         self.unassigned_tracks = np.arange(len(track_list)).tolist()
         self.unassigned_meas = np.arange(len(meas_list)).tolist()

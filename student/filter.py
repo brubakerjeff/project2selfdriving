@@ -25,7 +25,7 @@ class Filter:
     '''Kalman filter class'''
     def __init__(self):        
         self.dt=params.dt
-        self.q=0.1 
+        self.q=params.q
 
         pass
 
