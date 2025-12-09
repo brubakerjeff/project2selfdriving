@@ -23,28 +23,36 @@ import misc.params as params
 
 class Filter:
     '''Kalman filter class'''
-    def __init__(self):
+    def __init__(self):        
         self.dt=params.dt
         self.q=0.1 
+
         pass
 
     def F(self):
-        # system matrix
-        return np.matrix([[1,     0,       0,  self.dt,0      , 0         ],
-                          [0,     1,       0,        0,self.dt, 0         ],
-                          [0,     0,       1,        0,      0, self.dt   ],
-                          [0,     0,       0,        1,      0, 0         ], 
-                          [0,     0,       0,        0,      1, 0         ], 
-                          [0,     0,       0,        0,      0, 1         ], 
-                          ])
+        ############
+        # TODO Step 1: implement and return system matrix F
+        ############
+        dt = params.dt
+        return np.matrix([[1, 0, 0, dt, 0, 0],
+                        [0, 1, 0, 0, dt, 0],
+                        [0, 0, 1, 0, 0, dt],
+                        [0, 0, 0, 1, 0, 0],
+                        [0, 0, 0, 0, 1, 0],
+                        [0, 0, 0, 0, 0, 1]])
 
-        return 0
+
+        
         
         ############
         # END student code
         ############ 
 
     def Q(self):
+        ############
+        # TODO Step 1: implement and return process noise covariance Q
+        ############
+
         q=self.q
         dt=self.dt
         q1=((dt**3)/3)*q
@@ -58,18 +66,20 @@ class Filter:
                 [ 0,  q2,  0,   0,  q3, 0],
                 [ 0,  0,  q2,   0,  0, q3]
             ])
-        
         ############
         # END student code
         ############ 
 
     def predict(self, track):
-        # predict state and estimation error covariance to next timestep
-        F = self.F()
-        x = F*track.x # state prediction
-        P = F*track.P*F.transpose() + self.Q() # covariance prediction
+        ############
+        # TODO Step 1: predict state x and estimation error covariance P to next timestep, save x and P in track
+        ############
+
+        x = self.F()*track.x # state prediction
+        P = self.F()*track.P*self.F().transpose() + self.Q() # covariance prediction
         track.set_x(x)
         track.set_P(P)
+        
         ############
         # END student code
         ############ 
@@ -78,30 +88,26 @@ class Filter:
         ############
         # TODO Step 1: update state x and covariance P with associated measurement, save x and P in track
         ############
-        # update state and covariance with associated measurement
         H = meas.sensor.get_H(track.x) # measurement matrix
         gamma = self.gamma(track,meas)
-        
-        S = self.S(track,meas,H)
-        K = track.P*H.transpose()*np.linalg.inv(S) # Kalman gain
+        S = self.S(track, meas, H)# covariance of residual
+        K = track.P*H.transpose()*S.I # Kalman gain
         x = track.x + K*gamma # state update
         I = np.identity(params.dim_state)
         P = (I - K*H) * track.P # covariance update
-      
+        track.set_x(x)
+        track.set_P(P)
         ############
         # END student code
-        ############
-        # 
-        track.set_x(x) 
-        track.set_P(P)   
+        ############ 
         track.update_attributes(meas)
     
     def gamma(self, track, meas):
         ############
         # TODO Step 1: calculate and return residual gamma
         ############
-        gamme =  meas.z - meas.sensor.get_H(track.x)*track.x
-        return gamme
+
+        return meas.z - meas.sensor.get_hx(track.x)# residual
         
         ############
         # END student code
@@ -111,9 +117,8 @@ class Filter:
         ############
         # TODO Step 1: calculate and return covariance of residual S
         ############
-        H = meas.sensor.get_H(track.x) # measurement matrix
-        S=H*track.P*H.transpose() + meas.R # covariance of residual
-        return S
+
+        return H * track.P * H.transpose() + meas.R
         
         ############
         # END student code

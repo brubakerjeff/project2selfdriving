@@ -9,15 +9,11 @@
 # https://www.udacity.com/course/self-driving-car-engineer-nanodegree--nd013
 # ----------------------------------------------------------------------
 #
-# In the Track class, replace the fixed track initialization values by initialization of track.x and track.P based on the input meas, 
-# which is an unassigned lidar measurement object of type Measurement. Transform the unassigned measurement from sensor to vehicle coordinates 
-# with the sens_to_veh transformation matrix implemented in the Sensor class. Initialize the track state with 'initialized' and the score with 
-# 1./params.window, where window is the window size parameter, as learned in the track management lesson.
-# 
+
 # imports
 import numpy as np
 import collections
-import misc.params as params 
+
 # add project directory to python path to enable relative imports
 import os
 import sys
@@ -38,28 +34,49 @@ class Track:
         # unassigned measurement transformed from sensor to vehicle coordinates
         # - initialize track state and track score with appropriate values
         ############
+
         # transform measurement to vehicle coordinates
         pos_sens = np.ones((4, 1)) # homogeneous coordinates
         pos_sens[0:3] = meas.z[0:3] 
         pos_veh = meas.sensor.sens_to_veh*pos_sens
+
         # save initial state from measurement
         self.x = np.zeros((6,1))
         self.x[0:3] = pos_veh[0:3]
+
         
         # set up position estimation error covariance
         #M_rot = meas.sensor.sens_to_veh[0:3, 0:3]
         P_pos = M_rot * meas.R * np.transpose(M_rot)
 
+        # set up velocity estimation error covariance
+        sigma_p44 = 50 # initial setting for estimation error covariance P entry for vx
+        sigma_p55 = 50 # initial setting for estimation error covariance P entry for vy
+        sigma_p66 = 5 # initial setting for estimation error covariance P entry for vz
+        P_vel = np.matrix([[sigma_p44**2, 0, 0],
+                        [0, sigma_p55**2, 0],
+                        [0, 0, sigma_p66**2]])
 
-        P_vel = np.matrix([[params.sigma_p44, 0, 0],
-                        [0, params.sigma_p55, 0],
-                        [0, 0, params.sigma_p66]])
         # overall covariance initialization
         self.P = np.zeros((6, 6))
         self.P[0:3, 0:3] = P_pos
         self.P[3:6, 3:6] = P_vel
-        self.state = 'confirmed'
-        self.score = 1/params.window        
+
+#        self.x = np.matrix([[49.53980697],
+#                        [ 3.41006279],
+#                        [ 0.91790581],
+#                        [ 0.        ],
+#                        [ 0.        ],
+#                        [ 0.        ]])
+#        self.P = np.matrix([[9.0e-02, 0.0e+00, 0.0e+00, 0.0e+00, 0.0e+00, 0.0e+00],
+#                        [0.0e+00, 9.0e-02, 0.0e+00, 0.0e+00, 0.0e+00, 0.0e+00],
+#                        [0.0e+00, 0.0e+00, 6.4e-03, 0.0e+00, 0.0e+00, 0.0e+00],
+#                        [0.0e+00, 0.0e+00, 0.0e+00, 2.5e+03, 0.0e+00, 0.0e+00],
+#                        [0.0e+00, 0.0e+00, 0.0e+00, 0.0e+00, 2.5e+03, 0.0e+00],
+#                        [0.0e+00, 0.0e+00, 0.0e+00, 0.0e+00, 0.0e+00, 2.5e+01]])
+        self.state = "initialized"
+        self.score = 1./params.window
+        
         ############
         # END student code
         ############ 
@@ -111,34 +128,26 @@ class Trackmanagement:
         ############
         
         # decrease score for unassigned tracks
+        threshold = params.delete_threshold
         for i in unassigned_tracks:
             track = self.track_list[i]
             # check visibility    
             if meas_list: # if not empty
                 if meas_list[0].sensor.in_fov(track.x):
-                    track.score -= 1 / params.window
-                    track.score = max(track.score, 0.0)  # clamp to zero
-                else:
-                # optional: no penalty if outside FOV
-                    pass
+                    # your code goes here
+                    track.state = "tentative"
+                        
+                    if track.score >  threshold + 1 :
+                        track.score = threshold + 1
+                    track.score = track.score - 1./params.window
+                     
 
-        # delete old or poor tracks
-        to_delete = []
-        for i, track in enumerate(self.track_list):
-
-            # condition 1: score too low
-            if track.score < params.delete_threshold:
-                to_delete.append(i)
-                continue
-
-            # condition 2: covariance blew up (track is unreliable)
-            if np.max(np.diag(track.P)) > params.max_P:
-                to_delete.append(i)
-                continue
-
-        # remove tracks (do in reverse order to avoid index shifts)
-        for i in sorted(to_delete, reverse=True):
-            self.track_list.pop(i)
+        # delete old tracks   
+        for track in self.track_list:
+            if track.score <= threshold:
+                if track.P[0, 0] >= 3**2 or track.P[1, 1] >= 3**2:
+                    self.delete_track(track)
+        
         ############
         # END student code
         ############ 
@@ -168,14 +177,12 @@ class Trackmanagement:
         # - set track state to 'tentative' or 'confirmed'
         ############
 
-        # Increase the track score
-        track.score += 1/params.window  # You can adjust the increment value as needed
-
-        # Set the track state based on the score
-        if track.score >= self.confirmed_threshold:  # Assuming you have a threshold defined
-            track.state = 'confirmed'
+        
+        track.score = track.score + 1./params.window
+        if track.score < params.confirmed_threshold:
+            track.state =  "tentative"
         else:
-            track.state = 'tentative'
+            track.state =  "confirmed"
         
         ############
         # END student code
