@@ -47,6 +47,7 @@ class Sensor:
         # TODO Step 4: implement a function that returns True if x lies in the sensor's field of view, 
         # otherwise False.
         ############
+
         # check if an object x can be seen by this sensor
         pos_veh = np.ones((4, 1)) # homogeneous coordinates
         pos_veh[0:3] = x[0:3] 
@@ -168,7 +169,6 @@ class Measurement:
             sigma_lidar_x = params.sigma_lidar_x # load params
             sigma_lidar_y = params.sigma_lidar_y
             sigma_lidar_z = params.sigma_lidar_z
-            
             self.z = np.zeros((sensor.dim_meas,1)) # measurement vector
             self.z[0] = z[0]
             self.z[1] = z[1]

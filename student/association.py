@@ -39,27 +39,10 @@ class Association:
         ############
         
         # the following only works for at most one track and one measurement
-
-        N = len(track_list) # N tracks
-        M = len(meas_list) # M measurements
-
-        self.association_matrix =  []  # reset matrix
-        # loop over all tracks and all measurements to set up association matrix
-        for track in track_list:
-            temp = []
-            for meas in meas_list:
-                m_val = self.MHD(track, meas, KF)
-                sensor = meas.sensor
-                if self.gating(m_val, sensor):
-                    temp.append(m_val)
-                else:
-                    temp.append(np.inf)
-            
-            self.association_matrix.append(temp)
-
-
-        self.unassigned_tracks = np.arange(len(track_list)).tolist()
-        self.unassigned_meas = np.arange(len(meas_list)).tolist()
+         # the following only works for at most one track and one measurement
+        self.association_matrix = np.matrix([]) # reset matrix
+        self.unassigned_tracks = [] # reset lists
+        self.unassigned_meas = []
         
     #    if len(meas_list) > 0:
     #        self.unassigned_meas = [0]
@@ -86,7 +69,6 @@ class Association:
         self.unassigned_meas = np.arange(len(meas_list)).tolist()
         
         self.association_matrix = np.matrix(association_matrix)
-        
         ############
         # END student code
         ############ 
