@@ -145,12 +145,12 @@ class Association:
         ############
         
         
-        H = np.matrix(meas.z) 
-        gamma = KF.gamma(track,meas)
-        S = meas.R
-        MHD = gamma.transpose()*np.linalg.inv(S)*gamma # Mahalanobis distance formula
-        #MHD = math.sqrt(gamma.transpose()*np.linalg.inv(S)*gamma)
+        H = meas.sensor.get_H(track.x)
+        gamma = KF.gamma(track, meas)
+        S = KF.S(track, meas, H)
+        MHD = float(gamma.T * np.linalg.inv(S) * gamma)
         return MHD
+
         
         ############
         # END student code
