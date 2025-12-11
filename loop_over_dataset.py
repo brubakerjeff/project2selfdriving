@@ -44,7 +44,8 @@ from student.association import Association
 from student.measurements import Sensor, Measurement
 from misc.evaluation import plot_tracks, plot_rmse, make_movie
 import misc.params as params 
- 
+import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning)
 ##################
 ## Set parameters and perform initializations
 

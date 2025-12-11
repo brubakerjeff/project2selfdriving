@@ -24,6 +24,8 @@ import misc.params as params
 class Filter:
     '''Kalman filter class'''
     def __init__(self):
+        self.dt=params.dt
+        self.q=params.q
         pass
 
     def F(self):
@@ -50,17 +52,19 @@ class Filter:
         # TODO Step 1: implement and return process noise covariance Q
         ############
 
-        q = params.q
-        dt = params.dt
-        q1 = dt * q 
-        #return np.matrix([[q1, 0, 0, 0, 0, 0],   # changing as per last review comments of mentor
-        #                [0, q1, 0, 0, 0, 0],
-        #                [0, 0, q1, 0, 0, 0],
-        #                [0, 0, 0, q1, 0, 0],
-        #                [0, 0, 0, 0, q1, 0],
-        #                [ 0, 0, 0, 0, 0, q1]])
-        Q = np.zeros((params.dim_state, params.dim_state))
-        np.fill_diagonal(Q, q1)        
+        q=self.q
+        dt=self.dt
+        q1=((dt**3)/3)*q
+        q2=((dt**2)/2)*q
+        q3=dt*q
+        return np.array([
+                [q1,  0,   0,  q2,  0,  0],
+                [ 0, q1,   0,  0,  q2,  0],
+                [ 0,  0,  q1,  0,  0,  q2],
+                [ q2,  0,  0,  q3,  0,  0],
+                [ 0,  q2,  0,   0,  q3, 0],
+                [ 0,  0,  q2,   0,  0, q3]
+            ])       
         return np.matrix(Q)
         ############
         # END student code
@@ -101,7 +105,7 @@ class Filter:
     def gamma(self, track, meas):
         ############
         # TODO Step 1: calculate and return residual gamma
-        ############
+        ############x``
 
         return meas.z - meas.sensor.get_hx(track.x)# residual
         

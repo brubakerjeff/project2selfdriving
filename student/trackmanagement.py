@@ -135,8 +135,10 @@ class Trackmanagement:
         for track in self.track_list:
             if track.score <= threshold and track.state != "initialized":
                  if track.P[0, 0] >= params.max_P or track.P[1, 1] >=  params.max_P:
+                    print(f"Track {track.id} unassigned, score = {track.score}")
                     self.delete_track(track)
-        
+       
+
         ############
         # END student code
         ############ 
@@ -166,7 +168,8 @@ class Trackmanagement:
         # - set track state to 'tentative' or 'confirmed'
         ############
 
-        
+        print(f"Track {track.id} updated, score = {track.score}")
+
         track.score = track.score + 1./params.window
         if track.score < params.confirmed_threshold:
             track.state =  "tentative"

@@ -127,9 +127,9 @@ class Association:
             limit = params.gating_threshold
         # check if measurement lies inside gate
         #limit = chi2.ppf(0.95, df=2)
-        m_val = chi2.cdf(MHD*MHD,df)
+        limit = chi2.cdf(0.95,sensor.dim_meas)
         
-        if m_val < limit:
+        if MHD < limit: #< m_val 
             return True
         else:
             return False
@@ -146,10 +146,10 @@ class Association:
         
         
         H = np.matrix(meas.z) 
-        gamma = H - meas.sensor.get_hx(track.x)
+        gamma = KF.gamma(track,meas)
         S = meas.R
-       # MHD = gamma.transpose()*np.linalg.inv(S)*gamma # Mahalanobis distance formula
-        MHD = math.sqrt(gamma.transpose()*np.linalg.inv(S)*gamma)
+        MHD = gamma.transpose()*np.linalg.inv(S)*gamma # Mahalanobis distance formula
+        #MHD = math.sqrt(gamma.transpose()*np.linalg.inv(S)*gamma)
         return MHD
         
         ############
