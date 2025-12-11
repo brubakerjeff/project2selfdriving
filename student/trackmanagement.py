@@ -66,7 +66,7 @@ class Track:
         self.P[3:6, 3:6] = P_vel
 
         self.score = 1./params.window
-        self.state= "Initialized"
+        self.state= "initialized"
         # END student code
         ############ 
                
