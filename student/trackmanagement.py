@@ -120,16 +120,13 @@ class Trackmanagement:
         threshold = params.delete_threshold
         for i in unassigned_tracks:
             track = self.track_list[i]
-            # check visibility    
-            if meas_list: # if not empty
-                if meas_list[0].sensor.in_fov(track.x):
-                    # your code goes here
-                    track.state = "tentative"
-                        
-                    if track.score >  threshold + 1 :
-                        track.score = threshold + 1
-                    track.score = track.score - 1./params.window
-                     
+            
+            # Do not penalize brand-new tracks
+            if track.state == "initialized":
+                continue
+            if meas_list and meas_list[0].sensor.in_fov(track.x):
+                track.state = "tentative"
+                track.score -= 1./params.window
 
         # delete old tracks   
         for track in self.track_list:
