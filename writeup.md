@@ -1,6 +1,6 @@
 # Writeup: Track 3D-Objects Over Time
 
-Please use this starter template to answer the following questions:
+
 
 ### 1. Write a short recap of the four tracking steps and what you implemented there (filter, track management, association, camera fusion). Which results did you achieve? Which part of the project was most difficult for you to complete, and why?
 Filter - A kalman filter with camera fusion was implemented to predict the measurements based upon the laser and camera input. Track Management was implemented to create new tracks, associate measurements to tracks. 
@@ -12,4 +12,4 @@ Yes, this adds redundancy in case one system goes down.
 I can imagine sensors going bad. No, I did not see this represented.
 
 ### 4. Can you think of ways to improve your tracking results in the future?
-Integrate sensors from another domain like radar.
+Integrate sensors from another domain like radar. I think the Feature Pyramid Network could be made better?
